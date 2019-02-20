@@ -18,6 +18,16 @@ class App extends Component {
        this.setState({currentTask: {text: event.target.value}});
    };
 
+   editTask = (event, id) => {
+       const tasks = [...this.state.tasks];
+       tasks.forEach((task) =>{
+           if (task.id === id){
+               task.text = event.target.value;
+           }
+       })
+       this.setState({tasks: tasks});
+   };
+
    addTaskToList = () => {
         const newTask = this.state.currentTask;
         const tasks = [...this.state.tasks];
@@ -29,20 +39,9 @@ class App extends Component {
    removeTaskFromList = (taskId) => {
         const tasks = [...this.state.tasks];
         const newTasks = tasks.filter(task => task.id !== taskId);
-        console.log(newTasks);
         this.setState({tasks: newTasks});
    };
 
-   markAsDone = (taskId) => {
-        const tasks = this.state.tasks.map(task => {
-           if (task.id === taskId) {
-               task.completed = !task.completed;
-           }
-           return task;
-        });
-
-        this.setState({tasks});
-   };
 
   render() {
       const tasks = (
@@ -59,7 +58,7 @@ class App extends Component {
                                  id={task.id}
                                  text={task.text}
                                  delete={this.removeTaskFromList}
-                                 done={this.markAsDone}
+                                 change={this.editTask}
                                  style={style}
                     />
                   }
