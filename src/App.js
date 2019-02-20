@@ -5,14 +5,19 @@ import Task from './Task/Task'
 
 class App extends Component {
   state={
-    tasks: [
-        {id: 0, text: 'Не выходить из комнаты', completed: false},
-        {id: 1, text: 'Не совершать ошибку', completed: false},
-        {id: 2, text: 'Курить Шипку', completed: false},
-        {id: 3, text: 'Сходить в уборную', completed: false}
-    ],
+    tasks: [],
       currentTask: {text: ''}
   };
+
+  componentDidMount() {
+      const savedTasks = localStorage.getItem("savedTasks");
+      if (savedTasks) {
+          console.log(savedTasks);
+          const tasks = JSON.parse(savedTasks);
+          this.setState({tasks: tasks});
+      }
+  }
+
 
    addTask = (event) => {
        this.setState({currentTask: {text: event.target.value}});
@@ -26,20 +31,28 @@ class App extends Component {
            }
        })
        this.setState({tasks: tasks});
+       localStorage.setItem('savedTasks', JSON.stringify(tasks));
    };
 
    addTaskToList = () => {
         const newTask = this.state.currentTask;
         const tasks = [...this.state.tasks];
-        tasks.push({id: tasks[tasks.length-1].id+1, text: newTask.text, completed: false});
+        if (tasks.length > 0) {
+            tasks.push({id: tasks[tasks.length-1].id+1, text: newTask.text, completed: false});
+        } else
+       {
+           tasks.push({id: 0, text: newTask.text, completed: false})
+       }
         this.setState({tasks});
         this.setState({currentTask: {text: ''}})
+        localStorage.setItem('savedTasks', JSON.stringify(tasks));
    };
 
    removeTaskFromList = (taskId) => {
         const tasks = [...this.state.tasks];
         const newTasks = tasks.filter(task => task.id !== taskId);
         this.setState({tasks: newTasks});
+        localStorage.setItem('savedTasks', JSON.stringify(newTasks));
    };
 
 
